@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import sys
 import json
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath(''))
 from tasks.task_3.task_3 import DocumentProcessor
 from tasks.task_4.task_4 import EmbeddingClient
 from tasks.task_5.task_5 import ChromaCollectionCreator
@@ -125,7 +125,7 @@ class QuizGenerator:
 
         for _ in range(self.num_questions):
             ##### YOUR CODE HERE #####
-            question_str = # Use class method to generate question
+            question_str = _# Use class method to generate question
             
             ##### YOUR CODE HERE #####
             try:

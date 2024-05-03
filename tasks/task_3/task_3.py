@@ -79,10 +79,11 @@ class DocumentProcessor:
                 
                 loader = PyPDFLoader(temp_file_path)
                 pages = loader.load_and_split()
-                
 
                 # Step 3: Then, Add the extracted pages to the 'pages' list.
                 #####################################
+                
+                
                 
                 for page in pages:
                     self.pages.append(page)
