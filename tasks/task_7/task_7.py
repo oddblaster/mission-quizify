@@ -27,7 +27,7 @@ class QuizGenerator:
         if num_questions > 10:
             raise ValueError("Number of questions cannot exceed 10.")
         self.num_questions = num_questions
-
+ 
         self.vectorstore = vectorstore
         self.llm = None
         self.system_template = """
@@ -77,8 +77,8 @@ class QuizGenerator:
         self.llm = VertexAI(
             ############# YOUR CODE HERE ############
             model = "gemini-pro",
-            temperature=0.1,
-            max_output_tokens=50,
+            temperature=0.3,
+            max_output_tokens=500,
         )
         
     def generate_question_with_vectorstore(self):
@@ -122,7 +122,8 @@ class QuizGenerator:
         # HINT: Use the vectorstore as the retriever initialized on the class
         ############# YOUR CODE HERE ############
         
-
+        if self.vectorstore.db == None:
+            raise ValueError("The database of the vector store is empty.")
         retriever = self.vectorstore.db.as_retriever()
         
 
@@ -148,6 +149,7 @@ class QuizGenerator:
         chain = setup_and_retrieval | pt | self.llm
         # Invoke the chain with the topic as input
         response = chain.invoke(self.topic)
+        print(response)
         return response
     
 # Test the Object
