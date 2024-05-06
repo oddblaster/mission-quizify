@@ -46,7 +46,7 @@ class QuizManager:
         return self.questions[valid_index]
     
     ##########################################################
-    def next_question_index(self, direction=1):
+    def next_question_index(self,direction=1):
         """
         Task: Adjust the current quiz question index based on the specified direction.
 
@@ -64,8 +64,15 @@ class QuizManager:
 
         Note: Ensure that `st.session_state["question_index"]` is initialized before calling this method. This navigation method enhances the user experience by providing fluid access to quiz questions.
         """
+
         ##### YOUR CODE HERE #####
-        st.session_state["question_index"] = self.get_question_at_index(self.questions.index(st.session_state["question_index"] + direction))
+        if "question_index" not in st.session_state:
+            st.session_state["question_index"] = 0  # or whatever initial value you want
+        else:
+            curr_index = st.session_state["question_index"]
+            new_index = (curr_index + direction) % self.total_questions
+            st.session_state["question_index"] = new_index
+        
     ##########################################################
 
 
