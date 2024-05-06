@@ -24,7 +24,7 @@ if __name__ == "__main__":
         # Step 1: init the question bank list in st.session_state
         ##### YOUR CODE HERE #####
         st.session_state['question_bank'] =[]
-    
+
         screen = st.empty()
         with screen.container():
             st.header("Quiz Builder")
@@ -68,20 +68,24 @@ if __name__ == "__main__":
                     st.session_state["display_quiz"] = True
                     st.session_state["question_index"] = 0
 
+            
     elif st.session_state["display_quiz"]:
-        
+
         st.empty()
+
         with st.container():
             st.header("Generated Quiz Question: ")
             quiz_manager = QuizManager(st.session_state["question_bank"])
-            
+
+
+
             # Format the question and display it
             with st.form("MCQ"):
                 ##### YOUR CODE HERE #####
                 # Step 7: Set index_question using the Quiz Manager method get_question_at_index passing the st.session_state["question_index"]
                 index_question = quiz_manager.get_question_at_index(st.session_state["question_index"])
                 ##### YOUR CODE HERE #####
-                 
+                
                 # Unpack choices for radio button
                 choices = []
                 for choice in index_question['choices']:
@@ -97,24 +101,23 @@ if __name__ == "__main__":
                     index = None
                 )
                 
-                answer_choice = st.form_submit_button("Submit")
-                
+
                 ##### YOUR CODE HERE #####
                 # Step 8: Use the example below to navigate to the next and previous questions
                 # Here we use the next_question_index method from our quiz_manager class
                 # st.form_submit_button("Next Question, on_click=lambda: quiz_manager.next_question_index(direction=1)")
                 ##### YOUR CODE HERE #####
+
+                def handle_click(new_question):
+                    st.session_state['question_index'] = new_question
+                    print("Moving to next question")
+                    st.rerun()
                 
+                answer_choice = st.form_submit_button("Submit")
                 next_question = st.form_submit_button("Next Question")
-                
-                if next_question:
-                    quiz_manager.next_question_index(1)
-                
                 previous_question = st.form_submit_button("Previous Question")
 
-                if previous_question:
-                    quiz_manager.next_question_index(-1)
-                    
+
                 if answer_choice and answer is not None:
                     correct_answer_key = index_question['answer']
                     if answer.startswith(correct_answer_key):
@@ -122,4 +125,9 @@ if __name__ == "__main__":
                     else:
                         st.error("Incorrect!")
                     st.write(f"Explanation: {index_question['explanation']}")
-            
+                if next_question:
+                    handle_click(quiz_manager.next_question_index(1))
+                if previous_question:
+                    handle_click(quiz_manager.next_question_index(-1))
+                print(st.session_state["question_index"])
+        
