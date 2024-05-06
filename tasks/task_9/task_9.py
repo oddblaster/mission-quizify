@@ -64,14 +64,18 @@ class QuizManager:
 
         Note: Ensure that `st.session_state["question_index"]` is initialized before calling this method. This navigation method enhances the user experience by providing fluid access to quiz questions.
         """
-
+        new_index = 0
         ##### YOUR CODE HERE #####
         if "question_index" not in st.session_state:
             st.session_state["question_index"] = 0  # or whatever initial value you want
+            print("Reseted question index")
         else:
             curr_index = st.session_state["question_index"]
             new_index = (curr_index + direction) % self.total_questions
-            st.session_state["question_index"] = new_index
+            print("new_index ")
+            print(new_index)
+        
+        return new_index
         
     ##########################################################
 
@@ -158,4 +162,5 @@ if __name__ == "__main__":
                     else:
                         st.error("Incorrect!")
                         st.write(index_question['explanation'])
+                
             ##########################################################
