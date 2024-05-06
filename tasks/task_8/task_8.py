@@ -2,7 +2,9 @@ import streamlit as st
 import os
 import sys
 import json
-sys.path.append(os.path.abspath('../../'))
+import re
+
+sys.path.append(os.path.abspath(''))
 from tasks.task_3.task_3 import DocumentProcessor
 from tasks.task_4.task_4 import EmbeddingClient
 from tasks.task_5.task_5 import ChromaCollectionCreator
@@ -86,7 +88,7 @@ class QuizGenerator:
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
         # Enable a Retriever
-        retriever = self.vectorstore.as_retriever()
+        retriever = self.vectorstore.db.as_retriever()
         
         # Use the system template to create a PromptTemplate
         prompt = PromptTemplate.from_template(self.system_template)
@@ -101,6 +103,7 @@ class QuizGenerator:
 
         # Invoke the chain with the topic as input
         response = chain.invoke(self.topic)
+        response = response.replace("```json", "").strip("`\n")
         return response
 
     def generate_quiz(self) -> list:
@@ -125,21 +128,26 @@ class QuizGenerator:
 
         for _ in range(self.num_questions):
             ##### YOUR CODE HERE #####
-            question_str = # Use class method to generate question
+            query = self.generate_question_with_vectorstore()# Use class method to generate question
+            print(query)
             
             ##### YOUR CODE HERE #####
             try:
-                # Convert the JSON String to a dictionary
+                question = json.loads(query)
             except json.JSONDecodeError:
                 print("Failed to decode question JSON.")
                 continue  # Skip this iteration if JSON decoding fails
             ##### YOUR CODE HERE #####
+
+
 
             ##### YOUR CODE HERE #####
             # Validate the question using the validate_question method
             if self.validate_question(question):
                 print("Successfully generated unique question")
                 # Add the valid and unique question to the bank
+                
+                self.question_bank.append(question)
             else:
                 print("Duplicate or invalid question detected.")
             ##### YOUR CODE HERE #####
@@ -169,8 +177,17 @@ class QuizGenerator:
         ##### YOUR CODE HERE #####
         # Consider missing 'question' key as invalid in the dict object
         # Check if a question with the same text already exists in the self.question_bank
+
+        if question == None:
+            return False
+        else:
+            for q in self.question_bank:
+                if question == q:
+                    return False
+        
         ##### YOUR CODE HERE #####
-        return is_unique
+
+        return True
 
 
 # Test Generating the Quiz
@@ -178,7 +195,7 @@ if __name__ == "__main__":
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "YOUR-PROJECT-ID-HERE",
+        "project": "quizify-radical-ai",
         "location": "us-central1"
     }
     

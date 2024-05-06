@@ -3,7 +3,11 @@ from langchain_google_vertexai import VertexAI
 from langchain_core.prompts import PromptTemplate
 import os
 import sys
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath(''))
+
+
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="service_account_key.json"
 
 class QuizGenerator:
     def __init__(self, topic=None, num_questions=1, vectorstore=None):
@@ -23,7 +27,7 @@ class QuizGenerator:
         if num_questions > 10:
             raise ValueError("Number of questions cannot exceed 10.")
         self.num_questions = num_questions
-
+ 
         self.vectorstore = vectorstore
         self.llm = None
         self.system_template = """
@@ -72,6 +76,9 @@ class QuizGenerator:
         """
         self.llm = VertexAI(
             ############# YOUR CODE HERE ############
+            model = "gemini-pro",
+            temperature=0.3,
+            max_output_tokens=500,
         )
         
     def generate_question_with_vectorstore(self):
@@ -104,6 +111,10 @@ class QuizGenerator:
         # Raise an error if the vectorstore is not initialized on the class
         ############# YOUR CODE HERE ############
         
+        if self.llm is None:
+            self.init_llm()
+        assert self.vectorstore is not None, "VectorStore object was not found!"
+        
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
         ############# YOUR CODE HERE ############
@@ -111,11 +122,19 @@ class QuizGenerator:
         # HINT: Use the vectorstore as the retriever initialized on the class
         ############# YOUR CODE HERE ############
         
+        if self.vectorstore.db == None:
+            raise ValueError("The database of the vector store is empty.")
+        retriever = self.vectorstore.db.as_retriever()
+        
+
         ############# YOUR CODE HERE ############
         # Use the system template to create a PromptTemplate
         # HINT: Use the .from_template method on the PromptTemplate class and pass in the system template
         ############# YOUR CODE HERE ############
         
+        pt = PromptTemplate.from_template(self.system_template)
+        
+
         # RunnableParallel allows Retriever to get relevant documents
         # RunnablePassthrough allows chain.invoke to send self.topic to LLM
         setup_and_retrieval = RunnableParallel(
@@ -127,8 +146,10 @@ class QuizGenerator:
         # HINT: chain = RETRIEVER | PROMPT | LLM 
         ############# YOUR CODE HERE ############
 
+        chain = setup_and_retrieval | pt | self.llm
         # Invoke the chain with the topic as input
         response = chain.invoke(self.topic)
+        print(response)
         return response
     
 # Test the Object
@@ -141,7 +162,7 @@ if __name__ == "__main__":
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "YOUR-PROJECT-ID-HERE",
+        "project": "quizify-radical-ai",
         "location": "us-central1"
     }
     
