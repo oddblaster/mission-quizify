@@ -44,4 +44,7 @@ Authenticate the service account within the virtual environment by setting the G
 # Questions or Support:
 If you have any questions or need support, feel free to contact me at chuyangzhanggeorge@gmail.com
 
+# Video Demo
+https://www.loom.com/share/9bf9c172b05d4255a71a879bd4b7c684?sid=d7d57da3-ac3e-440a-b451-14ed26e957ae
+
 Thank you for the contribution and educational support from RadicalAI
